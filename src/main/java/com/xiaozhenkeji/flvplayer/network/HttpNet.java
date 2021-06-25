@@ -48,6 +48,7 @@ public class HttpNet {
 
 
         thread = new HttpThread();
+        thread.setPriority(Thread.MAX_PRIORITY);
         thread.start();
 
     }
@@ -62,6 +63,7 @@ public class HttpNet {
             flvDecode = new Decode(surface, width, height);
     }
 
+    long timetest;
 
     class HttpThread extends Thread {
 
@@ -82,7 +84,7 @@ public class HttpNet {
                 }
                 conn.setRequestMethod("GET");
                 // 添加 HTTP HEAD 中的一些参数，可参考《Java 核心技术 卷II》
-//                conn.setRequestProperty("Connection", "Keep-Alive");
+                conn.setRequestProperty("Connection", "Keep-Alive");
 
                 // 设置连接超时时间
                 conn.setConnectTimeout(60 * 1000);
@@ -110,7 +112,8 @@ public class HttpNet {
                         HttpNet.this.callBack.onStatus(RUN_NORMAL, "准备读取数据");
                     }
                     while ((len = is.read(b)) != -1) {
-
+//                        Log.e("timetest","julishangyizhen:"+(System.currentTimeMillis() - timetest));
+                        timetest = System.currentTimeMillis();
                         if (!isStar) {
                             if (HttpNet.this.callBack != null) {
                                 HttpNet.this.callBack.onFinsh();
@@ -118,8 +121,9 @@ public class HttpNet {
                             break;
                         }
 
-                        Log.e("lksdflkjsdf", toHexString1(b, len));
-
+//                        Log.e("lksdflkjsdf", toHexString1(b, len));
+//
+//                        Log.e("timetest","laliu:"+(System.currentTimeMillis() - timetest));
                         split(Arrays.copyOfRange(b, 0, len));
 
                     }
@@ -132,7 +136,7 @@ public class HttpNet {
 
 
                 } else {
-                    Log.e("statusaaa", "444444444");
+//                    Log.e("statusaaa", "444444444");
                     if (HttpNet.this.callBack != null) {
                         HttpNet.this.callBack.onStatus(ERROR_NET, "HTTP连接失败");
                         HttpNet.this.callBack.onError(ERROR_NET);
@@ -268,8 +272,9 @@ public class HttpNet {
                 return;
             }
         } catch (Exception e) {
+            e.printStackTrace();
 
-            Log.e("shipinshujuyic ", e.getMessage());
+            Log.e("shipinshujuyic ", e.getMessage()+"  \n "+ e.getLocalizedMessage());
             if (HttpNet.this.callBack != null) {
                 HttpNet.this.callBack.onStatus(ERROR_EXCEPTION, "视频数据异常");
                 if (HttpNet.this.callBack != null)
@@ -279,22 +284,13 @@ public class HttpNet {
     }
 
 
-    long time;
-    long genTime;
 
     private void analysis(byte[] data) {
 
-        Log.e("analysisjk", toHexString1(data, 50));
+//        Log.e("analysisjk", toHexString1(data, 50));
         long time = byte4TimeToInteger(Arrays.copyOfRange(data, 4, 8));
 
-        if (this.time == 0) {
-            this.time = time;
-        }
-        if (genTime == 0) {
-            genTime = System.currentTimeMillis();
-        }
 
-        long timekk = System.currentTimeMillis();
         if (data[0] == 9) {
             if (data[12] == 0) {
                 //首帧
@@ -353,19 +349,20 @@ public class HttpNet {
 
 
 //            音频信息在data[11]里
-            if (data[12] == 0) {
-                //首帧
-                flvDecode.putAudioData(Arrays.copyOfRange(data, 13, data.length), time);
-
-            } else {
-                //次帧
-                flvDecode.putAudioData(Arrays.copyOfRange(data, 13, data.length), time);
-            }
+//            if (data[12] == 0) {
+//                //首帧
+//                flvDecode.putAudioData(Arrays.copyOfRange(data, 13, data.length), time);
+//
+//            } else {
+//                //次帧
+//                flvDecode.putAudioData(Arrays.copyOfRange(data, 13, data.length), time);
+//            }
 
 
         }
 
-
+//        Log.e("timetest","jiexi:"+(System.currentTimeMillis() - timetest));
+//        Log.e("timetest","-------------------------");
     }
 
     public static int byte4TimeToInteger(byte[] value) {

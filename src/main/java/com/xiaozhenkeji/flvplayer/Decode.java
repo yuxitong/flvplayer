@@ -80,6 +80,8 @@ public class Decode {
     }
 
 
+
+
     private void initAudio() throws IOException {
         audioBufferinfo = new MediaCodec.BufferInfo();
         audioFormat = MediaFormat.createAudioFormat(MediaFormat.MIMETYPE_AUDIO_AAC, 44100, AudioFormat.ENCODING_PCM_16BIT);
@@ -130,7 +132,7 @@ public class Decode {
                 outputBufferIndex = mediaCodec.dequeueOutputBuffer(bufferInfo, 0);
             }
             if (outputBufferIndex < 0) {
-                //logger.e("outputBufferIndex = " + outputBufferIndex);
+                //logger.e("outputBufferIndex = " + ou  tputBufferIndex);
             }
         }catch (Exception e){
 
@@ -156,7 +158,7 @@ public class Decode {
             ByteBuffer outputBuffer;
 
 
-            inputIndex = audioEncodec.dequeueInputBuffer(0);
+            inputIndex = audioEncodec.dequeueInputBuffer(-1);
             if (inputIndex >= 0) {
 
                 ByteBuffer inputBuf = audioEncodec.getInputBuffer(inputIndex);
@@ -249,7 +251,7 @@ public class Decode {
 
 
     public void putVideoData(byte[] data, long time) {
-        Log.e("datafps", HttpNet.toHexString1(data,40));
+//        Log.e("datafps", HttpNet.toHexString1(data,40));
 
         if (!star) {
             return;
@@ -262,6 +264,7 @@ public class Decode {
     }
 
     public void putAudioData(byte[] data, long time) {
+//        Log.e("audioaaaa",HttpNet.toHexString40len(data));
         if (!star) {
             return;
         }
